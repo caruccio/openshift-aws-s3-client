@@ -1,0 +1,4 @@
+#!/bin/bash -e
+
+source $OPENSHIFT_AWS_S3_DIR/config/aws.conf
+exec $OPENSHIFT_AWS_S3_DIR/usr/bin/aws-store aws-s3

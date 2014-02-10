@@ -1,0 +1,45 @@
+#!/usr/bin/env python
+#
+# This script must be called from env var publish hooks
+
+import sys
+import os
+
+AWS_BASE_DIR = os.environ['OPENSHIFT_AWS_BASE_DIR']
+sys.path = [ os.path.join(AWS_BASE_DIR, 'usr', 'lib') ] + sys.path
+
+import aws_base as aws
+
+def create_s3_bucket(auth_token):
+	url = aws.url('aws-s3')
+	data = aws.post(url, auth_token)
+
+	for name, value in data[0].items():
+		aws.set_env_var(name, value)
+
+def delete_s3_bucket(auth_token):
+	if os.environ.has_key('OPENSHIFT_AWS_S3_BUCKET_NAME'):
+		url = aws.url('aws-s3', os.environ['OPENSHIFT_AWS_S3_BUCKET_NAME'])
+		aws.delete(url, auth_token)
+
+if __name__ == '__main__':
+	try:
+		auth_token = os.environ['AUTH_TOKEN']
+		service = sys.argv[1]
+
+		if service == 'aws-s3':
+			create_s3_bucket(auth_token)
+		elif service == '--delete':
+			delete_s3_bucket(auth_token)
+		else:
+			print >>sys.stderr, "Unknown service"
+			
+	except (IndexError, KeyError), ex:
+		import inspect
+		print >>sys.stderr, "AWS-S3: Internal error:", ex, inspect.trace()
+		print >>sys.stderr, "AWS-S3: Invalid parameters:", ex
+		sys.exit(1)
+	except Exception, ex:
+		#import inspect
+		#print >>sys.stderr, "AWS-S3: Internal error:", ex, inspect.trace()
+		sys.exit(1)

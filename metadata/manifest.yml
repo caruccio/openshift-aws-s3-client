@@ -1,0 +1,47 @@
+Name: aws-s3
+Cartridge-Short-Name: AWS_S3
+Display-Name: Amazon Web Services S3 Client
+Description: "Privides credentials for AWS S3"
+Version: '0.0.1'
+Versions: [ '0.0.1' ]
+License: "Apache License version 2.0"
+License-Url: http://www.apache.org/licenses/LICENSE-2.0.html
+Vendor: The Apache Software Foundation
+Cartridge-Version: 0.0.1
+Compatible-Versions: []
+Cartridge-Vendor: getup
+Usage-Rates:
+  - BRL: 0.02
+  - Duration: hours
+Categories:
+  - embedded
+  - plugin
+Website: http://aws.amazon.com/s3/
+Cart-Data:
+  - Key: OPENSHIFT_AWS_S3_BUCKET_NAME
+    Type: environment
+    Description: "Bucket name."
+  - Key: OPENSHIFT_AWS_S3_REGION
+    Type: environment
+    Description: "Region where bucket is located."
+  - Key: OPENSHIFT_AWS_S3_ENDPOINT
+    Type: environment
+    Description: "Endpoint suffix for this bucket."
+  - Key: OPENSHIFT_AWS_S3_URL
+    Type: environment
+    Description: "Bucket full URL."
+Provides:
+  - aws-s3
+Publishes:
+  publish-aws-s3-credentials:
+    Type: ENV:NET_TCP:aws:s3:credentials
+Scaling:
+  Min: 1
+  Max: 1
+Configure-Order:
+  - aws-base
+  - aws-s3
+Group-Overrides:
+- components:
+  - aws-s3
+  - aws-base
