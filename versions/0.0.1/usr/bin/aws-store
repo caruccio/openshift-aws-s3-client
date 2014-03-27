@@ -2,6 +2,10 @@
 #
 # This script must be called from env var publish hooks
 
+import sys, os
+
+sys.path.append(os.path.dirname(os.path.dirname(__file__)) + '/lib')
+
 SERVICES = ['s3']
 
 __doc__ = """GetupCloud AWS Client 0.1
