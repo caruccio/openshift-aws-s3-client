@@ -43,7 +43,7 @@ def url(*trailing):
 	return base_url + trailing
 
 def _request(verb, url, secret_token, **kva):
-	bearer_token = base64.encodestring('%s:%s' % (os.environ['OPENSHIFT_APP_UUID'], secret_token)).strip()
+	bearer_token = base64.b64encode('%s:%s' % (os.environ['OPENSHIFT_APP_UUID'], secret_token)).strip()
 
 	insecure = os.environ.get('INSECURE', 'false') == 'true'
 	method = getattr(requests, verb)
