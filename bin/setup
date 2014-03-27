@@ -8,10 +8,10 @@ case "$1" in
 		version="$2"
 esac
 
-if [ -z "$OPENSHIFT_SECRET_KEY" ]; then
-	echo "Env var OPENSHIFT_SECRET_KEY not found."
+if [ -z "$OPENSHIFT_SECRET_TOKEN" ]; then
+	echo "Env var OPENSHIFT_SECRET_TOKEN not found."
 	echo "Please run and try again:"
-	echo " \$ rhc set-env OPENSHIFT_SECRET_KEY=<long-and-random-string-here>"
+	echo " \$ rhc set-env OPENSHIFT_SECRET_TOKEN=<long-and-random-string-here>"
 	exit 1
 fi
 
