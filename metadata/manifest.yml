@@ -38,10 +38,7 @@ Publishes:
 Scaling:
   Min: 1
   Max: 1
-Configure-Order:
-  - aws-base
-  - aws-s3
 Group-Overrides:
 - components:
+  - web_framework
   - aws-s3
-  - aws-base

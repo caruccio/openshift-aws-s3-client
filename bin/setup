@@ -8,10 +8,13 @@ case "$1" in
 		version="$2"
 esac
 
-if [ -z "$AUTH_TOKEN" ]; then
-	echo "AUTH_TOKEN not found. Refusing to continue. Please contact our support."
+if [ -z "$OPENSHIFT_SECRET_KEY" ]; then
+	echo "Env var OPENSHIFT_SECRET_KEY not found."
+	echo "Please run and try again:"
+	echo " \$ rhc set-env OPENSHIFT_SECRET_KEY=<long-and-random-string-here>"
 	exit 1
 fi
 
+# setup some paths
 ln -fs versions/${version:-0.0.1}/usr
 ln -fs versions/${version:-0.0.1}/config

@@ -2,44 +2,107 @@
 #
 # This script must be called from env var publish hooks
 
+SERVICES = ['s3']
+
+__doc__ = """GetupCloud AWS Client 0.1
+
+Usage:
+  aws-store create s3
+  aws-store delete s3 [--bucket=<name>]
+  aws-store (-h | --help)
+  aws-store --version
+
+Options:
+  -h --help        Show this screen.
+  --version        Show version.
+  --bucket=<name>  Bucket name do delete
+
+"""
+
 import sys
 import os
+import base64
+import requests
+from docopt import docopt
 
-AWS_BASE_DIR = os.environ['OPENSHIFT_AWS_BASE_DIR']
-sys.path = [ os.path.join(AWS_BASE_DIR, 'usr', 'lib') ] + sys.path
+def env_var_add(name, value):
+	print "ENV_VAR_ADD: %s=%s" % (name, value)
 
-import aws_base as aws
+def url(*trailing):
+	base_url = os.environ['AWS_STORE_BASE_URL']
+	if not base_url.endswith('/'):
+		base_url = base_url + '/'
 
-def create_s3_bucket(auth_token):
-	url = aws.url('aws-s3')
-	data = aws.post(url, auth_token)
+	if trailing:
+		trailing = '/'.join(trailing) + '/'
+
+	return base_url + trailing
+
+def _request(verb, url, secret_token, **kva):
+	bearer_token = base64.encodestring('%s:%s' % (os.environ['OPENSHIFT_APP_UUID'], secret_token)).strip()
+
+	insecure = os.environ.get('INSECURE', 'false') == 'true'
+	method = getattr(requests, verb)
+
+	if 'params' not in kva:
+		kva['params'] = {}
+
+	res = method(url, headers={'Authorization': 'Bearer %s' % bearer_token}, verify=not insecure, **kva)
+	if not res.ok:
+		raise Exception("Invalid response from server: %i: %s" % (res.status_code, res.text))
+	if res.content:
+		return res.json()['data']
+
+def post(service, secret_token, **kva):
+	return _request('post', url(service), secret_token, **kva)
+
+def delete(service, secret_token, **kva):
+	return _request('delete', url(service), secret_token, **kva)
+
+#-----------------------
+
+def create_service(service, secret_token, **params):
+	'''Call AWS Store API to create a service and local env vars.
+	'''
+	data = post(service, secret_token)
 
 	for name, value in data[0].items():
-		aws.set_env_var(name, value)
+		env_var_add(name, value)
 
-def delete_s3_bucket(auth_token):
-	if os.environ.has_key('OPENSHIFT_AWS_S3_BUCKET_NAME'):
-		url = aws.url('aws-s3', os.environ['OPENSHIFT_AWS_S3_BUCKET_NAME'])
-		aws.delete(url, auth_token)
+def delete_service(service, secret_token, **params):
+	'''Calls AWS Store API to delete a service.
+	'''
+	delete(url, secret_token)
+
+#-----------------------
+
+def _get_service(opts):
+	if opts['s3']:
+		return 's3'
+	raise Exception('Invalid or missing service name')
+
+def _assert_param(opts, name):
+	if not hasattr(opts, name):
+		raise Exception('Missing parameter: %s' % name)
 
 if __name__ == '__main__':
-	try:
-		auth_token = os.environ['AUTH_TOKEN']
-		service = sys.argv[1]
+	opts = docopt(__doc__, version='GetupCloud AWS Client 0.1')
 
-		if service == 'aws-s3':
-			create_s3_bucket(auth_token)
-		elif service == '--delete':
-			delete_s3_bucket(auth_token)
-		else:
-			print >>sys.stderr, "Unknown service"
-			
-	except (IndexError, KeyError), ex:
-		import inspect
-		print >>sys.stderr, "AWS-S3: Internal error:", ex, inspect.trace()
-		print >>sys.stderr, "AWS-S3: Invalid parameters:", ex
-		sys.exit(1)
+	try:
+		secret_token = os.environ['OPENSHIFT_SECRET_TOKEN']
+	except KeyError:
+		print >>sys.stderr, 'Missing env var OPENSHIFT_SECRET_TOKEN'
+		sys.exit(2)
+
+	try:
+		svc = _get_service(opts)
+		if opts['create']:
+			create_service(svc, secret_token)
+		elif opts['delete']:
+			delete_service(svc, secret_token, opts['--bucket'])
 	except Exception, ex:
 		#import inspect
 		#print >>sys.stderr, "AWS-S3: Internal error:", ex, inspect.trace()
-		sys.exit(1)
+		import traceback
+		print >>sys.stderr, traceback.format_exc()
+		sys.exit(3)
