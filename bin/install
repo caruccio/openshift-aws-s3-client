@@ -10,7 +10,7 @@ esac
 source $OPENSHIFT_AWS_S3_DIR/config/aws.conf
 exec $OPENSHIFT_AWS_S3_DIR/usr/bin/aws-store create s3
 
-clietn_result "Use the following environment variables to access your AWS S3 bucket:"
+client_result "Use the following environment variables to access your AWS S3 bucket:"
 client_result ""
 client_result "Access Key ID:     \$OPENSHIFT_AWS_ACCESS_KEY_ID ($OPENSHIFT_AWS_ACCESS_KEY_ID)"
 client_result "Secret Access Key: \$OPENSHIFT_AWS_SECRET_ACCESS_KEY ($OPENSHIFT_AWS_SECRET_ACCESS_KEY)"
