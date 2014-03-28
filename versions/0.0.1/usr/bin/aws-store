@@ -76,7 +76,7 @@ def create_service(service, secret_token, **params):
 def delete_service(service, secret_token, bucket, **params):
 	'''Calls AWS Store API to delete a service.
 	'''
-	delete('/'.join(service, bucket), secret_token)
+	delete('/'.join([service, bucket]), secret_token)
 
 #-----------------------
 
