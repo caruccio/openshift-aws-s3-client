@@ -1,6 +1,5 @@
 #!/bin/bash -e
 
-set -x
 source $OPENSHIFT_CARTRIDGE_SDK_BASH
 
 case "$1" in
@@ -9,9 +8,9 @@ case "$1" in
 esac
 
 if [ -z "$OPENSHIFT_SECRET_TOKEN" ]; then
-	echo "Env var OPENSHIFT_SECRET_TOKEN not found."
-	echo "Please run and try again:"
-	echo " \$ rhc set-env OPENSHIFT_SECRET_TOKEN=<long-and-random-string-here>"
+	echo "Variável de ambiente $OPENSHIFT_SECRET_TOKEN não encontrada."
+	echo "Execute antes o seguinte comando e tente novamente:"
+	echo " \$ rhc set-env OPENSHIFT_SECRET_TOKEN=<string-longa-e-aleatória-aqui>"
 	exit 1
 fi
 

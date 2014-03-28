@@ -8,9 +8,14 @@ case "$1" in
 esac
 
 source $OPENSHIFT_AWS_S3_DIR/config/aws.conf
-exec $OPENSHIFT_AWS_S3_DIR/usr/bin/aws-store create s3
 
-client_result "Use the following environment variables to access your AWS S3 bucket:"
+if [ -n "$AWS_S3_REGION" ]; then
+	opts="--region=$AWS_S3_REGION"
+fi
+
+$OPENSHIFT_AWS_S3_DIR/usr/bin/aws-store create s3 $opts
+
+client_result "Use as seguintes variáveis de ambiente para acessar seu bucket S3:"
 client_result ""
 client_result "Access Key ID:     \$OPENSHIFT_AWS_ACCESS_KEY_ID ($OPENSHIFT_AWS_ACCESS_KEY_ID)"
 client_result "Secret Access Key: \$OPENSHIFT_AWS_SECRET_ACCESS_KEY ($OPENSHIFT_AWS_SECRET_ACCESS_KEY)"
@@ -18,4 +23,10 @@ client_result "Bucket Name:       \$OPENSHIFT_AWS_S3_BUCKET_NAME ($OPENSHIFT_AWS
 client_result "Region:            \$OPENSHIFT_AWS_S3_REGION ($OPENSHIFT_AWS_S3_REGION)"
 client_result "Endpoint:          \$OPENSHIFT_AWS_S3_ENDPOINT ($OPENSHIFT_AWS_S3_ENDPOINT)"
 client_result ""
-client_result "ALERT: IF YOU DELETE THIS CARTRIDGE YOUR BUCKET WILL BE DESTROYED."
+client_result "ALERTA: SE VOCÊ DELETAR ESTE CARTUCHO OU APP, O BUCKET SERÁ DESTRUIDO."
+
+cart_props "aws_access_key_id=$OPENSHIFT_AWS_ACCESS_KEY_ID"
+cart_props "aws_secret_access_key=$OPENSHIFT_AWS_SECRET_ACCESS_KEY"
+cart_props "aws_s3_bucket_name=$OPENSHIFT_AWS_S3_BUCKET_NAME"
+cart_props "aws_s3_region=$OPENSHIFT_AWS_S3_REGION"
+cart_props "aws_s3_endpoint=$OPENSHIFT_AWS_S3_ENDPOINT"

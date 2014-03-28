@@ -11,7 +11,7 @@ SERVICES = ['s3']
 __doc__ = """GetupCloud AWS Client 0.1
 
 Usage:
-  aws-store create s3
+  aws-store create s3 [--region=<name>]
   aws-store delete s3 [--bucket=<name>]
   aws-store (-h | --help)
   aws-store --version
@@ -19,6 +19,7 @@ Usage:
 Options:
   -h --help        Show this screen.
   --version        Show version.
+  --region=<name>  Region where to create bucket
   --bucket=<name>  Bucket name do delete
 
 """
@@ -98,10 +99,14 @@ if __name__ == '__main__':
 		print >>sys.stderr, 'Missing env var OPENSHIFT_SECRET_TOKEN'
 		sys.exit(2)
 
+	params = {}
+	if '--region' in opts:
+		params['region'] = opts['--region']
+
 	try:
 		svc = _get_service(opts)
 		if opts['create']:
-			create_service(svc, secret_token)
+			create_service(svc, secret_token, **params)
 		elif opts['delete']:
 			delete_service(svc, secret_token, opts['--bucket'])
 	except Exception, ex:
