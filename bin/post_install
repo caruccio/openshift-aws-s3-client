@@ -2,3 +2,13 @@
 
 source $OPENSHIFT_AWS_S3_DIR/config/aws.conf
 exec $OPENSHIFT_AWS_S3_DIR/usr/bin/aws-store create s3
+
+clietn_result "Use the following environment variables to access your AWS S3 bucket:"
+client_result ""
+client_result "Access Key ID:     \$OPENSHIFT_AWS_ACCESS_KEY_ID ($OPENSHIFT_AWS_ACCESS_KEY_ID)"
+client_result "Secret Access Key: \$OPENSHIFT_AWS_SECRET_ACCESS_KEY ($OPENSHIFT_AWS_SECRET_ACCESS_KEY)"
+client_result "Bucket Name:       \$OPENSHIFT_AWS_S3_BUCKET_NAME ($OPENSHIFT_AWS_S3_BUCKET_NAME)"
+client_result "Region:            \$OPENSHIFT_AWS_S3_REGION ($OPENSHIFT_AWS_S3_REGION)"
+client_result "Endpoint:          \$OPENSHIFT_AWS_S3_ENDPOINT ($OPENSHIFT_AWS_S3_ENDPOINT)"
+client_result ""
+client_result "ALERT: IF YOU DELETE THIS CARTRIDGE YOUR BUCKET WILL BE DESTROYED."
