@@ -69,7 +69,7 @@ def delete(service, secret_token, **kva):
 def create_service(service, secret_token, **params):
 	'''Call AWS Store API to create a service and local env vars.
 	'''
-	data = post(service, secret_token)
+	data = post(service, secret_token, **params)
 
 	for name, value in data[0].items():
 		env_var_add(name, value)
@@ -106,7 +106,7 @@ if __name__ == '__main__':
 	try:
 		svc = _get_service(opts)
 		if opts['create']:
-			create_service(svc, secret_token, **params)
+			create_service(svc, secret_token, params=params)
 		elif opts['delete']:
 			delete_service(svc, secret_token, opts['--bucket'])
 	except Exception, ex:
