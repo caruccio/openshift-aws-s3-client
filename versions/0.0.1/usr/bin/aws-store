@@ -31,7 +31,7 @@ import requests
 from docopt import docopt
 
 def set_env_var(name, value):
-	with open(os.path.join(os.environ['OPENSHIFT_AWS_S3_DIR'], 'env', name) as f:
+	with open(os.path.join(os.environ['OPENSHIFT_AWS_S3_DIR'], 'env', name)) as f:
 		f.write(value)
 
 def url(*trailing):
