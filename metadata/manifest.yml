@@ -42,3 +42,4 @@ Group-Overrides:
 - components:
   - web_framework
   - aws-s3
+Source-Url: https://github.com/caruccio/openshift-aws-s3-client/archive/master.zip
